@@ -20,10 +20,10 @@ defmodule Pisq.Workers.GameSupervisor do
   end
 
   defp create_game_uuids() do
-    game_id = :rand.uniform(Application.get_env(:pisq, :max_id_number))
-    spectator_id = :rand.uniform(Application.get_env(:pisq, :max_id_number))
-    crosses_id = :rand.uniform(Application.get_env(:pisq, :max_id_number))
-    circles_id = :rand.uniform(Application.get_env(:pisq, :max_id_number))
+    game_id = to_string(:rand.uniform(Application.get_env(:pisq, :max_id_number)))
+    spectator_id = to_string(:rand.uniform(Application.get_env(:pisq, :max_id_number)))
+    crosses_id = to_string(:rand.uniform(Application.get_env(:pisq, :max_id_number)))
+    circles_id = to_string(:rand.uniform(Application.get_env(:pisq, :max_id_number)))
     %{
       game_id: game_id,
       spectator_id: spectator_id,
