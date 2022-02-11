@@ -1,0 +1,7 @@
+<h2>Game admin page</h2>
+<ul>
+  <li>This is the game with ID: <%= @game_id %></li>
+  <li><a href="<%= Routes.live_path(@conn, PisqWeb.Live.UserLive, @conn_details[:crosses_id]) %>">First player's link:</a> </li>
+  <li><a href="<%= Routes.live_path(@conn, PisqWeb.Live.UserLive, @conn_details[:circles_id]) %>">Second player's link:</a> </li>
+  <li><a href="<%= Routes.live_path(@conn, PisqWeb.Live.UserLive, @conn_details[:spectator_id]) %>">Spectator's link:</a> </li>
+</ul>

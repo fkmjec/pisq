@@ -1,0 +1,22 @@
+<section class="phx-hero">
+  <h1><%= gettext "Welcome to %{name}!", name: "Pisq" %></h1>
+  <p>A simple Czech tic-tac-toe app</p>
+  <p>
+  <form action="<%= Routes.game_path(@conn, :create_game) %>" method="post">
+    <button name="create_game" value="create_game">Create a new game</button>
+    <input type="hidden" value="<%= @csrf_token %>" name="_csrf_token"/>
+  </form>
+</section>
+
+<section class="row">
+  <article class="column">
+    <h2>About</h2>
+    <p>
+    Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut
+    labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut
+    aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore
+    eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident,
+    sunt in culpa qui officia deserunt mollit anim id est laborum.
+    </p>
+  </article>
+</section>
