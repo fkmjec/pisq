@@ -17,15 +17,11 @@ defmodule PisqWeb.Live.UserLive do
           <tr>
           <%= for x <- 0..Application.get_env(:pisq, :board_x)-1 do %>
           <td style="border:1px solid black; width:10px; height:10px;">
-            <button
+            <a href="#"
             phx-click="place_symbol"
             phx-value-x="<%= x %>"
             phx-value-y="<%= y %>">
               <%= get_symbol_to_display(@board, x, y) %>
-            </button>
-            <a href="#"
-            phx-click="kek">
-              lol
             </a>
             </td>
           <% end %>
@@ -48,9 +44,6 @@ defmodule PisqWeb.Live.UserLive do
   end
 
   def mount(params, _session, socket) do
-    # socket = assign_competitor_defaults(socket, session)
-    # log_start(@module, "mount")
-
     id = params["id"]
     board = GameUtils.get_game_board(id)
     socket = assign(socket, :id, id)
@@ -74,14 +67,11 @@ defmodule PisqWeb.Live.UserLive do
     id = socket.assigns.id
     case GameUtils.place_symbol(id, x, y) do
       {:ok, %{board: board}} -> {:noreply, assign(socket, :board, board)}
-      {:error, _message} -> {:noreply, socket} # TODO error handling
+      {:error, message} ->
+        socket = put_flash(socket, :error, message)
+        {:noreply, socket} # TODO error handling
       _ -> {:noreply, socket} # should never happen
     end
-  end
-
-  def handle_event("kek", _params, socket) do
-    IO.puts("lol")
-    {:noreply, socket}
   end
 
 #   def handle_event(

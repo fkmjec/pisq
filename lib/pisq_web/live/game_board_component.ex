@@ -15,11 +15,6 @@ defmodule PisqWeb.Live.GameBoardComponent do
             phx-value-y="2">
               <%= get_symbol_to_display(@board, x, y) %>
             </a>
-
-            <a href="#"
-            phx-click="kek">
-              lol
-            </a>
             </td>
           <% end %>
           </tr>
