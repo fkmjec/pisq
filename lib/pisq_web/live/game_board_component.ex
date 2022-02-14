@@ -13,7 +13,6 @@ defmodule PisqWeb.Live.GameBoardComponent do
             phx-click="place_symbol"
             phx-value-x="1"
             phx-value-y="2">
-              <%= get_symbol_to_display(@board, x, y) %>
             </a>
             </td>
           <% end %>
@@ -22,12 +21,5 @@ defmodule PisqWeb.Live.GameBoardComponent do
       </table>
       </div>
     """
-  end
-
-  defp get_symbol_to_display(board, x, y) do
-    cond do
-      board[{x, y}] == nil -> "__"
-      true -> "x"
-    end
   end
 end

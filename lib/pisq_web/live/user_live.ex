@@ -21,7 +21,7 @@ defmodule PisqWeb.Live.UserLive do
             phx-click="place_symbol"
             phx-value-x="<%= x %>"
             phx-value-y="<%= y %>">
-              <%= get_symbol_to_display(@board, x, y) %>
+              <%= raw get_symbol_to_display(@board, x, y) %>
             </a>
             </td>
           <% end %>
@@ -37,9 +37,11 @@ defmodule PisqWeb.Live.UserLive do
   end
 
   defp get_symbol_to_display(board, x, y) do
-    cond do
-      board[{x, y}] == nil -> "__"
-      true -> "x"
+    case board[{x, y}] do
+      nil -> "&nbsp;"
+      :cross -> "x"
+      :circle -> "o"
+      _ -> "something went wrong"
     end
   end
 

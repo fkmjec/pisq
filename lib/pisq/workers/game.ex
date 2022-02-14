@@ -54,7 +54,6 @@ defmodule Pisq.Workers.Game do
     _from,
     state = %{
       board: board,
-      game_id: game_id,
       current_player_id: current_player_id,
       crosses_id: crosses_id,
       circles_id: circles_id,
@@ -73,7 +72,7 @@ defmodule Pisq.Workers.Game do
       player_id == circles_id and player_id == current_player_id ->
         board = Map.put(board, {x, y}, :circle)
         broadcast_board_change(board, crosses_id, circles_id, spectator_id)
-        current_player_id = circles_id
+        current_player_id = crosses_id
         state = %{state | board: board, current_player_id: current_player_id}
         {:reply, :ok, state}
       true ->
