@@ -44,7 +44,7 @@ config :pisq,
   game_pid_store: :game_pid_store,
   board_x: 20,
   board_y: 20,
-  max_id_number: 1000000000
+  max_id_number: 1000000000,
   winning_symbol_count: 5
 
 # Use Jason for JSON parsing in Phoenix

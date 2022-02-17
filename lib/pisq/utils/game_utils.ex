@@ -29,19 +29,19 @@ defmodule Pisq.Utils.GameUtils do
     check_left_to_right(board, coords) or check_up_down(board, coords) or check_diagonals(board, coords)
   end
 
-  defp check_left_to_right(board, {x, y} = coords) do
+  defp check_left_to_right(board, {x, y}) do
     winning_count = Application.get_env(:pisq, :winning_symbol_count)
-    Enum.any?(-(winning_count - 1)..0, fn dx -> check_row(board, {x + dx, y} end))
+    Enum.any?(-(winning_count - 1)..0, fn dx -> check_row(board, {x + dx, y}) end)
   end
 
-  defp check_up_down(board, coords) do
+  defp check_up_down(board, {x, y}) do
     winning_count = Application.get_env(:pisq, :winning_symbol_count)
-    Enum.any?(-(winning_count - 1)..0, fn dy -> check_column(board, {x, y + dy} end))
+    Enum.any?(-(winning_count - 1)..0, fn dy -> check_column(board, {x, y + dy}) end)
   end
 
-  defp check_diagonals() do
+  defp check_diagonals(board, {x, y}) do
     winning_count = Application.get_env(:pisq, :winning_symbol_count)
-    Enum.any?(-(winning_count - 1)..0, fn d -> check_diagonal(board, {x + d, y + d} end))
+    Enum.any?(-(winning_count - 1)..0, fn d -> check_diagonal(board, {x + d, y + d}) end)
   end
 
 
@@ -57,7 +57,7 @@ defmodule Pisq.Utils.GameUtils do
     Enum.all?(0..winning_count - 1, fn dy -> board[{sx, sy + dy}] == starting_symbol end)
   end
 
-  defp check_diagonal() do
+  defp check_diagonal(board, {sx, sy} = starting_coords) do
     winning_count = Application.get_env(:pisq, :winning_symbol_count)
     starting_symbol = board[starting_coords]
     Enum.all?(0..winning_count - 1, fn d -> board[{sx + d, sy + d}] == starting_symbol end)
