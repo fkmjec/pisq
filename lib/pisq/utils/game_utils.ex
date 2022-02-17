@@ -24,6 +24,45 @@ defmodule Pisq.Utils.GameUtils do
     end
   end
 
+  # verify if a side has won by placing a symbol at coordinates coords
+  def verify_win(board, coords) do
+    check_left_to_right(board, coords) or check_up_down(board, coords) or check_diagonals(board, coords)
+  end
+
+  defp check_left_to_right(board, {x, y} = coords) do
+    winning_count = Application.get_env(:pisq, :winning_symbol_count)
+    Enum.any?(-(winning_count - 1)..0, fn dx -> check_row(board, {x + dx, y} end))
+  end
+
+  defp check_up_down(board, coords) do
+    winning_count = Application.get_env(:pisq, :winning_symbol_count)
+    Enum.any?(-(winning_count - 1)..0, fn dy -> check_column(board, {x, y + dy} end))
+  end
+
+  defp check_diagonals() do
+    winning_count = Application.get_env(:pisq, :winning_symbol_count)
+    Enum.any?(-(winning_count - 1)..0, fn d -> check_diagonal(board, {x + d, y + d} end))
+  end
+
+
+  defp check_row(board, {sx, sy} = starting_coords) do
+    winning_count = Application.get_env(:pisq, :winning_symbol_count)
+    starting_symbol = board[starting_coords]
+    Enum.all?(0..winning_count - 1, fn dx -> board[{sx + dx, sy}] == starting_symbol end)
+  end
+
+  defp check_column(board, {sx, sy} = starting_coords) do
+    winning_count = Application.get_env(:pisq, :winning_symbol_count)
+    starting_symbol = board[starting_coords]
+    Enum.all?(0..winning_count - 1, fn dy -> board[{sx, sy + dy}] == starting_symbol end)
+  end
+
+  defp check_diagonal() do
+    winning_count = Application.get_env(:pisq, :winning_symbol_count)
+    starting_symbol = board[starting_coords]
+    Enum.all?(0..winning_count - 1, fn d -> board[{sx + d, sy + d}] == starting_symbol end)
+  end
+
   def can_place_symbol?(board, x, y) do
     not out_of_bounds?(x, y) and board[{x, y}] == nil
   end
