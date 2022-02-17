@@ -59,6 +59,16 @@ defmodule PisqWeb.Live.UserLive do
     {:noreply, assign(socket, state)}
   end
 
+  def handle_info(%{event: "game_end", payload: state = %{winner: :circles}}, socket) do
+    socket = put_flash(socket, :info, "Circles won!")
+    {:noreply, assign(socket, state)}
+  end
+
+  def handle_info(%{event: "game_end", payload: state = %{winner: :crosses}}, socket) do
+    socket = put_flash(socket, :info, "Crosses won!")
+    {:noreply, assign(socket, state)}
+  end
+
   def handle_event(
     "place_symbol",
     %{"x" => str_x, "y" => str_y},

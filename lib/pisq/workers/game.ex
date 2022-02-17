@@ -27,7 +27,8 @@ defmodule Pisq.Workers.Game do
         crosses_id: crosses_id,
         circles_id: circles_id,
         game_id: game_id,
-        spectator_id: spectator_id
+        spectator_id: spectator_id,
+        game_over: false
       }
     }
   end
@@ -49,6 +50,29 @@ defmodule Pisq.Workers.Game do
     {:reply, {:ok, board}, state}
   end
 
+  # def handle_call(
+  #   {:place_symbol, _},
+  #   _from,
+  #   state = %{
+  #     game_over: true,
+  #     current_player_id: circles_id,
+  #     circles_id: circles_id,
+  # }) do
+  #   {:reply, {:error, "Game is over, crosses won!"}, state}
+  # end
+
+  # def handle_call(
+  #   {:place_symbol, _},
+  #   _from,
+  #   state = %{
+  #     game_over: true,
+  #     current_player_id: crosses_id,
+  #     crosses_id: crosses_id,
+  # }) do
+  #   {:reply, {:error, "Game is over, circles won!"}, state}
+  # end
+
+  # TODO untangle
   def handle_call(
     {:place_symbol, %{ x: x, y: y, player_id: player_id}},
     _from,
@@ -57,7 +81,8 @@ defmodule Pisq.Workers.Game do
       current_player_id: current_player_id,
       crosses_id: crosses_id,
       circles_id: circles_id,
-      spectator_id: spectator_id
+      spectator_id: spectator_id,
+      game_over: false
     }
   ) do
     cond do
@@ -67,22 +92,42 @@ defmodule Pisq.Workers.Game do
         board = Map.put(board, {x, y}, :cross)
         broadcast_board_change(board, crosses_id, circles_id, spectator_id)
         current_player_id = circles_id
-        state = %{state | board: board, current_player_id: current_player_id}
+        state = cond do
+          GameUtils.verify_win(board, {x, y}) ->
+            broadcast_game_end(:crosses, crosses_id, circles_id, spectator_id)
+            %{state | board: board, current_player_id: current_player_id, game_over: true}
+          true ->
+            %{state | board: board, current_player_id: current_player_id}
+        end
         {:reply, :ok, state}
       player_id == circles_id and player_id == current_player_id ->
         board = Map.put(board, {x, y}, :circle)
         broadcast_board_change(board, crosses_id, circles_id, spectator_id)
         current_player_id = crosses_id
-        state = %{state | board: board, current_player_id: current_player_id}
+        state = cond do
+            GameUtils.verify_win(board, {x, y}) ->
+              broadcast_game_end(:circles, crosses_id, circles_id, spectator_id)
+              %{state | board: board, current_player_id: current_player_id, game_over: true}
+            true ->
+              %{state | board: board, current_player_id: current_player_id}
+        end
         {:reply, :ok, state}
       true ->
         {:reply, {:error, "Invalid player id"}, state}
     end
   end
 
-  def broadcast_board_change(board, crosses_id, circles_id, spectator_id) do
+  # FIXME this looks pretty bad, can it be prettier?
+  defp broadcast_board_change(board, crosses_id, circles_id, spectator_id) do
     Endpoint.broadcast_from(self(), crosses_id, "board_update", %{board: board})
     Endpoint.broadcast_from(self(), circles_id, "board_update", %{board: board})
     Endpoint.broadcast_from(self(), spectator_id, "board_update", %{board: board})
+  end
+
+  # FIXME this looks pretty bad, can it be prettier?
+  defp broadcast_game_end(winner, crosses_id, circles_id, spectator_id) do
+    Endpoint.broadcast_from(self(), crosses_id, "game_end", %{winner: winner})
+    Endpoint.broadcast_from(self(), circles_id, "game_end", %{winner: winner})
+    Endpoint.broadcast_from(self(), spectator_id, "game_end", %{winner: winner})
   end
 end
