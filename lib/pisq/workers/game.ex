@@ -50,6 +50,30 @@ defmodule Pisq.Workers.Game do
     {:reply, {:ok, board}, state}
   end
 
+  def handle_call(:get_winner, _from, state = %{ game_over: false }) do
+    {:reply, nil, state}
+  end
+
+  def handle_call(:get_winner, _from, state = %{ game_over: true, current_player_id: circles_id, circles_id: circles_id, crosses_id: crosses_id}) do
+    {:reply, :crosses, state}
+  end
+
+  def handle_call(:get_winner, _from, state = %{ game_over: true, current_player_id: crosses_id, circles_id: circles_id, crosses_id: crosses_id}) do
+    {:reply, :circles, state}
+  end
+
+  def handle_call({:get_player_type, crosses_id}, _from, state = state = %{ crosses_id: crosses_id}) do
+    {:reply, :crosses, state}
+  end
+
+  def handle_call({:get_player_type, circles_id}, _from, state = state = %{ circles_id: circles_id}) do
+    {:reply, :circles, state}
+  end
+
+  def handle_call({:get_player_type, spectator_id}, _from, state = state = %{ spectator_id: spectator_id}) do
+    {:reply, :spectator, state}
+  end
+
   # def handle_call(
   #   {:place_symbol, _},
   #   _from,

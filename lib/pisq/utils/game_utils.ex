@@ -1,4 +1,21 @@
 defmodule Pisq.Utils.GameUtils do
+  def get_game_state(id) do
+    board = get_game_board(id)
+    player = get_player_type(id)
+    winner = get_winner(id)
+    %{board: board, player: player, winner: winner}
+  end
+
+  defp get_player_type(id) do
+    pid = get_game_pid(id)
+    GenServer.call(pid, {:get_player_type, id})
+  end
+
+  defp get_winner(id) do
+    pid = get_game_pid(id)
+    GenServer.call(pid, :get_winner)
+  end
+
   def is_field_available(board, {x, y}) do
     Map.has_key?(board, {x, y})
   end
