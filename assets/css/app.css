@@ -1,6 +1,34 @@
 /* This file is for your main application CSS */
 @import "./phoenix.css";
 
+.game-field:hover {
+  background: yellow;
+}
+
+.game-field {
+  display: block;
+  width: 100%;
+  height:100%;
+  overflow: hidden;
+  text-align: center;
+  white-space: nowrap;
+}
+
+.d-none {
+  display:none;
+}
+
+.game-field-cell {
+  margin:0;
+  padding: 0;
+  height:33px;
+  border: 1px solid grey;
+  overflow:hidden;
+}
+
+.game-board {
+  table-layout: fixed;
+}
 /* Alerts and form errors used by phx.new */
 .alert {
   padding: 15px;

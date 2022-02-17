@@ -2,6 +2,7 @@ defmodule PisqWeb.Live.UserLive do
   use PisqWeb, :live_view
   alias PisqWeb.Endpoint
   alias Pisq.Utils.GameUtils
+  alias PisqWeb.Live.GameBoardComponent
 
   @module "UserLive"
 
@@ -11,38 +12,8 @@ defmodule PisqWeb.Live.UserLive do
     ~L"""
     <h3> User <%= @id %> </h3>
     <div class="container-fluid px-0">
-    <div style="display:flex;flex-direction:column; height:100%;">
-      <table>
-        <%= for y <- 0..Application.get_env(:pisq, :board_y)-1 do %>
-          <tr>
-          <%= for x <- 0..Application.get_env(:pisq, :board_x)-1 do %>
-          <td style="border:1px solid black; width:10px; height:10px;">
-            <a href="#"
-            phx-click="place_symbol"
-            phx-value-x="<%= x %>"
-            phx-value-y="<%= y %>">
-              <%= raw get_symbol_to_display(@board, x, y) %>
-            </a>
-            </td>
-          <% end %>
-          </tr>
-        <% end %>
-      </table>
-    </div>
-    <div class="container-fluid">
-      <!-- TODO Flash messages -->
-    </div>
-    </div>
+    <%= live_component @socket, GameBoardComponent, board: @board %>
     """
-  end
-
-  defp get_symbol_to_display(board, x, y) do
-    case board[{x, y}] do
-      nil -> "&nbsp;"
-      :cross -> "x"
-      :circle -> "o"
-      _ -> "something went wrong"
-    end
   end
 
   def mount(params, _session, socket) do
@@ -68,6 +39,15 @@ defmodule PisqWeb.Live.UserLive do
     socket = put_flash(socket, :info, "Crosses won!")
     {:noreply, assign(socket, state)}
   end
+
+  def handle_event(
+    "place_symbol",
+    _,
+    socket = %{ assigns: %{winner: winner}}
+  ) do
+    {:noreply, put_flash(socket, :error, "The game is over, #{winner} won!")}
+  end
+
 
   def handle_event(
     "place_symbol",

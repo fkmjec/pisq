@@ -3,17 +3,21 @@ defmodule PisqWeb.Live.GameBoardComponent do
 
   def render(assigns) do
     ~L"""
-      <div style="display:flex;flex-direction:column; height:100%;">
-      <table>
+      <div>
+      <table class="game-board">
         <%= for y <- 0..Application.get_env(:pisq, :board_y)-1 do %>
           <tr>
           <%= for x <- 0..Application.get_env(:pisq, :board_x)-1 do %>
-          <td style="border:1px solid black; width:10px; height:10px;">
-            <a href="#"
-            phx-click="place_symbol"
-            phx-value-x="1"
-            phx-value-y="2">
-            </a>
+            <td class="game-field-cell">
+              <a class="game-field <%= hide_when(@board[{x, y}] != nil) %>" href="#"
+              phx-click="place_symbol"
+              phx-value-x="<%= x %>"
+              phx-value-y="<%= y %>">
+              <%= raw get_symbol_to_display(@board, x, y) %>
+              </a>
+              <span class="game-field <%= hide_when(@board[{x, y}] == nil) %>">
+              <%= raw get_symbol_to_display(@board, x, y) %>
+              </span>
             </td>
           <% end %>
           </tr>
@@ -21,5 +25,21 @@ defmodule PisqWeb.Live.GameBoardComponent do
       </table>
       </div>
     """
+  end
+
+  defp get_symbol_to_display(board, x, y) do
+    case board[{x, y}] do
+      nil -> "&nbsp;"
+      :cross -> "x"
+      :circle -> "o"
+      _ -> "something went wrong"
+    end
+  end
+
+  defp hide_when(condition) do
+    case condition do
+      true -> "d-none"
+      false -> ""
+    end
   end
 end
