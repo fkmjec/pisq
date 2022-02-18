@@ -12,11 +12,22 @@ defmodule PisqWeb.GameController do
 
   def admin(conn, %{"game_id" => game_id }) do
     game_pid = GameUtils.get_game_pid(game_id)
-    case GenServer.call(game_pid, {:get_conn_details, %{game_id: game_id}}) do
-      {:ok, conn_details} ->
-        render(conn, "admin.html", game_id: game_id, conn_details: conn_details)
-      {:error, _message} ->
-        render(conn, "bad_request.html")
-    end
+    case game_pid do
+      :error ->
+        conn
+        |> put_status(:not_found)
+        |> put_view(PisqWeb.ErrorView)
+        |> render(:"404")
+      _ ->
+        case GenServer.call(game_pid, {:get_conn_details, %{game_id: game_id}}) do
+          {:ok, conn_details} ->
+            render(conn, "admin.html", game_id: game_id, conn_details: conn_details)
+          {:error, _message} ->
+            conn
+            |> put_status(:not_found)
+            |> put_view(PisqWeb.ErrorView)
+            |> render(:"404")
+            end
+      end
   end
 end

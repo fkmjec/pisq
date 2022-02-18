@@ -22,8 +22,10 @@ defmodule Pisq.Utils.GameUtils do
 
   def get_game_pid(id) do
     game_pid_store = Application.get_env(:pisq, :game_pid_store)
-    [{_, pid}] = :ets.lookup(game_pid_store, id)
-    pid
+    case :ets.lookup(game_pid_store, id) do
+      [{_, pid}] -> pid
+      _ -> :error
+    end
   end
 
   def place_symbol(id, x, y) do
