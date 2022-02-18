@@ -20,12 +20,18 @@ defmodule Pisq.Utils.GameUtils do
     Map.has_key?(board, {x, y})
   end
 
-  def get_game_pid(id) do
+  def game_exists?(id) do
     game_pid_store = Application.get_env(:pisq, :game_pid_store)
     case :ets.lookup(game_pid_store, id) do
-      [{_, pid}] -> pid
-      _ -> :error
+      [{_, pid}] -> true
+      _ -> false
     end
+  end
+
+  def get_game_pid(id) do
+    game_pid_store = Application.get_env(:pisq, :game_pid_store)
+    [{_, pid}] = :ets.lookup(game_pid_store, id)
+    pid
   end
 
   def place_symbol(id, x, y) do

@@ -18,13 +18,16 @@ defmodule PisqWeb.Live.UserLive do
 
   def mount(params, _session, socket) do
     id = params["id"]
-    game_state = GameUtils.get_game_state(id)
 
-    socket = assign(socket, :id, id)
-    |> assign(game_state)
-
-    Endpoint.subscribe(id)
-    {:ok, socket}
+    case GameUtils.game_exists?(id) do
+    true -> game_state = GameUtils.get_game_state(id)
+      socket = assign(socket, :id, id)
+      |> assign(game_state)
+      Endpoint.subscribe(id)
+      {:ok, socket}
+    _ ->
+      {:ok, render(socket, to: "/")} # FIXME here should be a proper error message. I need to look up how that is done
+    end
   end
 
   def handle_info(%{event: "board_update", payload: state}, socket) do
