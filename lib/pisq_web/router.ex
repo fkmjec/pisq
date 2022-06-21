@@ -22,7 +22,7 @@ defmodule PisqWeb.Router do
     pipe_through :browser
 
     get "/", PageController, :index
-    get "/admin/:game_id", GameController, :admin
+    get "/admin/:admin_id", GameController, :admin
     post "/create_game", GameController, :create_game
   end
 

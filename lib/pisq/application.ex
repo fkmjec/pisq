@@ -2,6 +2,7 @@ defmodule Pisq.Application do
   # See https://hexdocs.pm/elixir/Application.html
   # for more information on OTP Applications
   @moduledoc false
+  alias Pisq.Utils.StorageUtils, as: StorageUtils
 
   use Application
 
@@ -16,16 +17,12 @@ defmodule Pisq.Application do
       # Start the Endpoint (http/https)
       PisqWeb.Endpoint,
       {Registry, keys: :unique, name: GameRegistry},
-      {Pisq.Workers.GameSupervisor, name: Pisq.GameSupervisor, strategy: :one_for_one}
       # Start a worker by calling: Pisq.Worker.start_link(arg)
       # {Pisq.Worker, arg}
-    ] 
-    # create a ETS store for looking up procces PIDs.
-    # we're using ETS since it is simple and fast. The idiomatic way
-    # would probably be to use a Registry, but we don't mind the public
-    # state that much.
-    game_pid_store = Application.get_env(:pisq, :game_pid_store)
-    :ets.new(game_pid_store, [:set, :public, :named_table])
+    ]
+
+    # init storage for games
+    StorageUtils.init_storage()
 
     # See https://hexdocs.pm/elixir/Supervisor.html
     # for other strategies and supported options

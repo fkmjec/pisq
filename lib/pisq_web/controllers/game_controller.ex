@@ -1,22 +1,27 @@
 defmodule PisqWeb.GameController do
   use PisqWeb, :controller
-  alias Pisq.Workers.GameSupervisor, as: GameSupervisor
-  alias Pisq.Utils.GameUtils, as: GameUtils
+  alias Pisq.Utils.StorageUtils, as: StorageUtils
+  alias Pisq.Game, as: Game
 
   def create_game(conn, _params) do
-    # create a new game
-    {:ok, uuids} = GameSupervisor.start_game()
-    # redirect to the game admin page
-    redirect(conn, to: Routes.game_path(conn, :admin, uuids[:game_id]))
+    game = Game.create_game()
+    redirect(conn, to: Routes.game_path(conn, :admin, game.user_ids.admin_id))
   end
 
-  def admin(conn, %{"game_id" => game_id }) do
-    game_pid = GameUtils.get_game_pid(game_id)
-    case GenServer.call(game_pid, {:get_conn_details, %{game_id: game_id}}) do
-      {:ok, conn_details} ->
-        render(conn, "admin.html", game_id: game_id, conn_details: conn_details)
-      {:error, _message} ->
-        render(conn, "bad_request.html")
+  def admin(conn, %{"admin_id" => admin_id }) do
+    case StorageUtils.get_game(admin_id) do
+      {:ok, game} ->
+        if game.user_ids.admin_id == admin_id do
+          render(conn, "admin.html", game_id: admin_id, conn_details: game.user_ids)
+        else
+          conn
+          |> put_view(PisqWeb.ErrorView)
+          |> render("404.html")
+        end
+      {:error, _msg} ->
+        conn
+        |> put_view(PisqWeb.ErrorView)
+        |> render("404.html")
     end
   end
 end

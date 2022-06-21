@@ -1,12 +1,33 @@
 defmodule PisqWeb.Live.UserLive do
   use PisqWeb, :live_view
   alias PisqWeb.Endpoint
-  alias Pisq.Utils.GameUtils
+  alias Pisq.Utils.GameUtils, as: GameUtils
   alias PisqWeb.Live.GameBoardComponent
+  alias Pisq.Utils.StorageUtils, as: StorageUtils
 
   @module "UserLive"
 
-#   defp topic(team_id), do: "team:#{team_id}"
+  # create the data to send to the client
+  defp create_client_state(user_id, game) do
+    board = game.board
+    winner = game.winner
+    user_type = GameUtils.get_user_type(user_id, game)
+    can_play = GameUtils.can_play(user_type, game)
+    %{
+      board: board,
+      winner: winner,
+      can_play: can_play
+    }
+  end
+
+  defp update_state(id) do
+    game = case StorageUtils.get_game(id) do
+      {:ok, game} -> game
+      {:error, _msg} -> raise "Not found" # TODO: make this not throw a 500
+    end
+    client_state = create_client_state(id, game)
+    {game, client_state}
+  end
 
   def render(assigns) do
     ~L"""
@@ -18,37 +39,27 @@ defmodule PisqWeb.Live.UserLive do
 
   def mount(params, _session, socket) do
     id = params["id"]
-    game_state = GameUtils.get_game_state(id)
+    {game, client_state} = update_state(id)
 
     socket = assign(socket, :id, id)
-    |> assign(game_state)
+    |> assign(client_state)
 
-    Endpoint.subscribe(id)
+    Endpoint.subscribe(game.user_ids.admin_id)
     {:ok, socket}
   end
 
-  def handle_info(%{event: "board_update", payload: state}, socket) do
-    {:noreply, assign(socket, state)}
+  def handle_info(%{event: "game_update"}, socket) do
+    {_, client_state} = update_state(socket.assigns.id)
+    socket = cond do
+      client_state.winner == :crosses ->
+        put_flash(socket, :info, "Crosses won!")
+      client_state.winner == :circles ->
+        put_flash(socket, :info, "Circles won!")
+      true ->
+        socket
+    end
+    {:noreply, assign(socket, client_state)}
   end
-
-  def handle_info(%{event: "game_end", payload: state = %{winner: :circles}}, socket) do
-    socket = put_flash(socket, :info, "Circles won!")
-    {:noreply, assign(socket, state)}
-  end
-
-  def handle_info(%{event: "game_end", payload: state = %{winner: :crosses}}, socket) do
-    socket = put_flash(socket, :info, "Crosses won!")
-    {:noreply, assign(socket, state)}
-  end
-
-  def handle_event(
-    "place_symbol",
-    _,
-    socket = %{ assigns: %{winner: winner}}
-  ) when winner != nil do
-    {:noreply, put_flash(socket, :error, "The game is over, #{winner} won!")}
-  end
-
 
   def handle_event(
     "place_symbol",
@@ -58,13 +69,16 @@ defmodule PisqWeb.Live.UserLive do
     { x, "" } = Integer.parse(str_x)
     { y, "" } = Integer.parse(str_y)
     id = socket.assigns.id
-    case GameUtils.place_symbol(id, x, y) do
-      {:ok, %{board: board}} -> {:noreply, assign(socket, :board, board)}
-      {:error, message} ->
-        socket = put_flash(socket, :error, message)
-        {:noreply, socket} # TODO error handling
-      _ -> {:noreply, socket} # should never happen
+    {game, client_state} = update_state(id)
+    socket = assign(socket, client_state)
+    game = case GameUtils.place_symbol(id, game, {x, y}) do
+      {:ok, new_game} -> new_game
+      _ -> game
     end
+    StorageUtils.update_game(game)
+    {_, client_state} = update_state(id)
+    socket = assign(socket, client_state)
+    Endpoint.broadcast(game.user_ids.admin_id, "game_update", %{})
+    {:noreply, socket}
   end
-
 end
