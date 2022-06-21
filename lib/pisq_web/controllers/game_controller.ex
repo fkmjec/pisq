@@ -14,10 +14,14 @@ defmodule PisqWeb.GameController do
         if game.user_ids.admin_id == admin_id do
           render(conn, "admin.html", game_id: admin_id, conn_details: game.user_ids)
         else
-          render(conn, "404.html")
+          conn
+          |> put_view(PisqWeb.ErrorView)
+          |> render("404.html")
         end
       {:error, _msg} ->
-        render(conn, "404.html")
+        conn
+        |> put_view(PisqWeb.ErrorView)
+        |> render("404.html")
     end
   end
 end

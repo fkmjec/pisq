@@ -12,6 +12,7 @@ defmodule Pisq.Utils.StorageUtils do
   end
 
   defp store_user_id(user_id, game_id) do
+    # FIXME: what if user_ids collide?
     case :ets.insert(@game_id_lookup, {user_id, game_id}) do
       _ -> {:ok} # so that it has a consistent API
     end
