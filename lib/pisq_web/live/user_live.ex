@@ -1,12 +1,25 @@
 defmodule PisqWeb.Live.UserLive do
   use PisqWeb, :live_view
   alias PisqWeb.Endpoint
-  alias Pisq.Utils.GameUtils
+  alias Pisq.Utils.GameUtils, as: GameUtils
   alias PisqWeb.Live.GameBoardComponent
+  alias Pisq.Utils.StorageUtils, as: StorageUtils
 
   @module "UserLive"
 
 #   defp topic(team_id), do: "team:#{team_id}"
+
+  # create the data to send to the client
+  defp create_client_state(user_id, game) do
+    board = game.board
+    winner = game.winner
+    can_play = GameUtils.can_play(user_id, game)
+    %{
+      board: board,
+      winner: winner,
+      can_play: can_play
+    }
+  end
 
   def render(assigns) do
     ~L"""
@@ -18,10 +31,14 @@ defmodule PisqWeb.Live.UserLive do
 
   def mount(params, _session, socket) do
     id = params["id"]
-    game_state = GameUtils.get_game_state(id)
+    game = case StorageUtils.get_game(id) do
+      {:ok, game} -> game
+      {:error, _msg} -> raise "Not found" # TODO: make this not throw a 500
+    end
+    client_state = create_client_state(id, game)
 
     socket = assign(socket, :id, id)
-    |> assign(game_state)
+    |> assign(client_state)
 
     Endpoint.subscribe(id)
     {:ok, socket}

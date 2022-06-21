@@ -9,6 +9,10 @@ defmodule Pisq.Utils.GameUtils do
   #   GenServer.call(pid, :get_winner)
   # end
 
+  def can_play(user_id, game) do
+    game.current_player == user_id and game.winner == nil
+  end
+
   def is_field_available(board, {x, y}) do
     Map.has_key?(board, {x, y})
   end

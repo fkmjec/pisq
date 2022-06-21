@@ -13,6 +13,7 @@ defmodule Pisq.Utils.StorageUtils do
 
   defp store_user_id(user_id, game_id) do
     # FIXME: what if user_ids collide?
+    # for now we shall assume that it won't happen
     case :ets.insert(@game_id_lookup, {user_id, game_id}) do
       _ -> {:ok} # so that it has a consistent API
     end
@@ -22,7 +23,6 @@ defmodule Pisq.Utils.StorageUtils do
     results = :ets.lookup(@game_id_lookup, user_id)
     if length(results) == 1 do
       [{_, game_id}] = results
-      IO.inspect(game_id)
       {:ok, game_id}
     else
       {:error, "No game corresponding to user ID"}
