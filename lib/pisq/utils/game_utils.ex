@@ -1,44 +1,16 @@
 defmodule Pisq.Utils.GameUtils do
-  def get_game_state(id) do
-    board = get_game_board(id)
-    player = get_player_type(id)
-    winner = get_winner(id)
-    %{board: board, player: player, winner: winner}
-  end
+  # defp get_player_type(id) do
+  #   pid = get_game_pid(id)
+  #   GenServer.call(pid, {:get_player_type, id})
+  # end
 
-  defp get_player_type(id) do
-    pid = get_game_pid(id)
-    GenServer.call(pid, {:get_player_type, id})
-  end
-
-  defp get_winner(id) do
-    pid = get_game_pid(id)
-    GenServer.call(pid, :get_winner)
-  end
+  # defp get_winner(id) do
+  #   pid = get_game_pid(id)
+  #   GenServer.call(pid, :get_winner)
+  # end
 
   def is_field_available(board, {x, y}) do
     Map.has_key?(board, {x, y})
-  end
-
-  def get_game_pid(id) do
-    game_pid_store = Application.get_env(:pisq, :game_pid_store)
-    [{_, pid}] = :ets.lookup(game_pid_store, id)
-    pid
-  end
-
-  def place_symbol(id, x, y) do
-    pid = get_game_pid(id)
-    GenServer.call(pid, {:place_symbol, %{x: x, y: y, player_id: id}})
-  end
-
-  def get_game_board(id) do
-    pid = get_game_pid(id)
-    case GenServer.call(pid, :get_board) do
-      {:ok, board} ->
-        board
-      {:error, _message} ->
-        {:error, "Something real bad has happened, couldn't get game board"}
-    end
   end
 
   # verify if a side has won by placing a symbol at coordinates coords

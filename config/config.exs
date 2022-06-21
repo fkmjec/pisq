@@ -41,7 +41,6 @@ config :logger, :console,
   metadata: [:request_id]
 
 config :pisq,
-  game_pid_store: :game_pid_store,
   board_x: 20,
   board_y: 20,
   max_id_number: 1000000000,
