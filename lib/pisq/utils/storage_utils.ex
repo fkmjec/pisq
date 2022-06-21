@@ -47,7 +47,11 @@ defmodule Pisq.Utils.StorageUtils do
         [{_, game}] = :ets.lookup(@game_store, game_id)
         {:ok, game}
       {:error, msg} -> {:error, msg}
-      _ -> raise "Unexpected result"
     end
+  end
+
+  # FIXME: naive function. Should it check the game existence?
+  def update_game(game) do
+    :ets.insert(@game_store, {game.user_ids.admin_id, game})
   end
 end

@@ -30,8 +30,8 @@ defmodule PisqWeb.Live.GameBoardComponent do
   defp get_symbol_to_display(board, x, y) do
     case board[{x, y}] do
       nil -> "&nbsp;"
-      :cross -> "x"
-      :circle -> "o"
+      :crosses -> "x"
+      :circles -> "o"
       _ -> "something went wrong"
     end
   end
