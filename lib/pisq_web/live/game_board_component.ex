@@ -9,13 +9,13 @@ defmodule PisqWeb.Live.GameBoardComponent do
           <tr>
           <%= for x <- 0..Application.get_env(:pisq, :board_x)-1 do %>
             <td class="game-field-cell">
-              <a class="game-field <%= hide_when(@board[{x, y}] != nil) %>" href="#"
+              <a class="game-field <%= hide_when(@board[{x, y}] != nil or !@can_play) %>" href="#"
               phx-click="place_symbol"
               phx-value-x="<%= x %>"
               phx-value-y="<%= y %>">
               <%= raw get_symbol_to_display(@board, x, y) %>
               </a>
-              <span class="game-field <%= hide_when(@board[{x, y}] == nil) %>">
+              <span class="taken-field <%= hide_when(@board[{x, y}] == nil) %>">
               <%= raw get_symbol_to_display(@board, x, y) %>
               </span>
             </td>

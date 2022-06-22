@@ -33,7 +33,7 @@ defmodule PisqWeb.Live.UserLive do
     ~L"""
     <h3> User <%= @id %> </h3>
     <div class="container-fluid px-0">
-    <%= live_component @socket, GameBoardComponent, board: @board %>
+    <%= live_component @socket, GameBoardComponent, board: @board, can_play: @can_play %>
     """
   end
 
