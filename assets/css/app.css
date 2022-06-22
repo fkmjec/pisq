@@ -14,6 +14,12 @@
   white-space: nowrap;
 }
 
+.symbol {
+  position:relative;
+  color: black;
+  top: 15%;
+};
+
 .taken-field {
   display: block;
   width: 100%;
@@ -30,7 +36,7 @@
 .game-field-cell {
   margin:0;
   padding: 0;
-  height:33px;
+  height:32px;
   border: 1px solid grey;
   overflow:hidden;
 }
