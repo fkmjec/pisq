@@ -1,5 +1,6 @@
 defmodule PisqWeb.Live.GameBoardComponent do
   use PisqWeb, :live_component
+  alias PisqWeb.Helpers, as: Helpers
 
   def render(assigns) do
     ~L"""
@@ -9,13 +10,13 @@ defmodule PisqWeb.Live.GameBoardComponent do
           <tr>
           <%= for x <- 0..Application.get_env(:pisq, :board_x)-1 do %>
             <td class="game-field-cell">
-              <a class="game-field <%= hide_when(@board[{x, y}] != nil or !@can_play) %>" href="#"
+              <a class="game-field <%= Helpers.hide_when(@board[{x, y}] != nil or !@can_play) %>" href="#"
               phx-click="place_symbol"
               phx-value-x="<%= x %>"
               phx-value-y="<%= y %>">
               <span class="symbol"><%= raw get_symbol_to_display(@board, x, y) %></span>
               </a>
-              <span class="taken-field <%= hide_when(@board[{x, y}] == nil) %>">
+              <span class="taken-field <%= Helpers.hide_when(@board[{x, y}] == nil) %>">
               <span class="symbol"><%= raw get_symbol_to_display(@board, x, y) %></span>
               </span>
             </td>
@@ -55,13 +56,6 @@ defmodule PisqWeb.Live.GameBoardComponent do
       </svg>
       """
       _ -> "something went wrong"
-    end
-  end
-
-  defp hide_when(condition) do
-    case condition do
-      true -> "d-none"
-      false -> ""
     end
   end
 end

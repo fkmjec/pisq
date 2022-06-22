@@ -4,6 +4,7 @@ defmodule PisqWeb.Live.UserLive do
   alias Pisq.Utils.GameUtils, as: GameUtils
   alias PisqWeb.Live.GameBoardComponent
   alias Pisq.Utils.StorageUtils, as: StorageUtils
+  alias PisqWeb.Helpers, as: Helpers
 
   @module "UserLive"
 
@@ -14,6 +15,7 @@ defmodule PisqWeb.Live.UserLive do
     user_type = GameUtils.get_user_type(user_id, game)
     can_play = GameUtils.can_play(user_type, game)
     %{
+      user_type: user_type,
       board: board,
       winner: winner,
       can_play: can_play
@@ -31,8 +33,14 @@ defmodule PisqWeb.Live.UserLive do
 
   def render(assigns) do
     ~L"""
-    <h3> User <%= @id %> </h3>
+    <h3> User <%= @id %> - <%= @user_type %> </h3>
     <div class="container-fluid px-0">
+    <span class="<%= Helpers.hide_when(@winner == nil) %>">
+      <h2>Good game!</h2>
+      <p>
+      The player who played <%= @winner %> won! Congratulations. Here, you will see some stats.TODO.
+      </p>
+    </span>
     <%= live_component @socket, GameBoardComponent, board: @board, can_play: @can_play %>
     """
   end
