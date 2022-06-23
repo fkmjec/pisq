@@ -18,6 +18,7 @@ defmodule PisqWeb.Live.UserLive do
       user_type: user_type,
       board: board,
       winner: winner,
+      winning_positions: game.winning_positions,
       can_play: can_play
     }
   end
@@ -41,7 +42,7 @@ defmodule PisqWeb.Live.UserLive do
       The player who played <%= @winner %> won! Congratulations. Here, you will see some stats.TODO.
       </p>
     </span>
-    <%= live_component @socket, GameBoardComponent, board: @board, can_play: @can_play %>
+    <%= live_component @socket, GameBoardComponent, board: @board, can_play: @can_play, winning_positions: @winning_positions %>
     """
   end
 

@@ -5,19 +5,22 @@ defmodule Pisq.Utils.GameUtilsTest do
   test "row gets detected" do
     start_pos = {0, 0}
     board_cross = create_row(start_pos, :cross)
-    assert GameUtils.verify_win(board_cross, start_pos)
+    {won, _} = GameUtils.verify_win(board_cross, start_pos)
+    assert won
   end
 
   test "column gets detected" do
     start_pos = {0, 0}
     board_cross = create_column(start_pos, :cross)
-    assert GameUtils.verify_win(board_cross, start_pos)
+    {won, _} = GameUtils.verify_win(board_cross, start_pos)
+    assert won
   end
 
   test "diagonal gets detected" do
     start_pos = {0, 0}
     board_cross = create_diagonal(start_pos, :cross)
-    assert GameUtils.verify_win(board_cross, start_pos)
+    {won, _} = GameUtils.verify_win(board_cross, start_pos)
+    assert won
   end
 
   defp create_row({sx, sy}, symbol) do

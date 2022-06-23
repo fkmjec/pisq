@@ -14,10 +14,10 @@ defmodule PisqWeb.Live.GameBoardComponent do
               phx-click="place_symbol"
               phx-value-x="<%= x %>"
               phx-value-y="<%= y %>">
-              <span class="symbol"><%= raw get_symbol_to_display(@board, x, y) %></span>
+              <span class="symbol"><%= raw get_symbol_to_display(@board, @winning_positions, x, y) %></span>
               </a>
               <span class="taken-field <%= Helpers.hide_when(@board[{x, y}] == nil) %>">
-              <span class="symbol"><%= raw get_symbol_to_display(@board, x, y) %></span>
+              <span class="symbol"><%= raw get_symbol_to_display(@board, @winning_positions, x, y) %></span>
               </span>
             </td>
           <% end %>
@@ -28,7 +28,11 @@ defmodule PisqWeb.Live.GameBoardComponent do
     """
   end
 
-  defp get_symbol_to_display(board, x, y) do
+  defp get_symbol_to_display(board, winning_positions, x, y) do
+    color = case winning_positions[{x, y}] do
+      true -> "red"
+      nil -> "black"
+    end
     case board[{x, y}] do
       nil -> "&nbsp;"
       :crosses -> """
@@ -47,12 +51,13 @@ defmodule PisqWeb.Live.GameBoardComponent do
       <polygon
         points="0.708,457.678 33.149,490 245,277.443 456.851,490 489.292,457.678 277.331,245.004 489.292,32.337 456.851,0 245,212.564 33.149,0 0.708,32.337 212.669,245.004 "
         id="polygon989"
+        style="fill:#{color}; stroke:#{color}"
         transform="matrix(0.04093462,0,0,0.04081633,-0.02898171,0)" />
       </svg>
       """
       :circles -> """
       <svg height="30" width="30">
-      <circle cx="15" cy="11" r="10" stroke="black" stroke-width="2" fill="white" />
+      <circle cx="15" cy="11" r="10" stroke="#{color}" stroke-width="2" fill="white" />
       </svg>
       """
       _ -> "something went wrong"
