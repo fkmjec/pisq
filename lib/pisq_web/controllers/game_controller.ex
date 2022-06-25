@@ -12,7 +12,7 @@ defmodule PisqWeb.GameController do
     case StorageUtils.get_game(admin_id) do
       {:ok, game} ->
         if game.user_ids.admin_id == admin_id do
-          render(conn, "admin.html", game_id: admin_id, conn_details: game.user_ids)
+          render(conn, "admin.html", page_title: "Admin hry #{admin_id}", game_id: admin_id, conn_details: game.user_ids)
         else
           conn
           |> put_view(PisqWeb.ErrorView)

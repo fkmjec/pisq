@@ -1,7 +1,13 @@
-<h2>Game admin page</h2>
-<ul>
-  <li>This is the game with ID: <%= @game_id %></li>
-  <li><a href="<%= Routes.live_path(@conn, PisqWeb.Live.UserLive, @conn_details[:crosses_id]) %>">First player's link:</a> </li>
-  <li><a href="<%= Routes.live_path(@conn, PisqWeb.Live.UserLive, @conn_details[:circles_id]) %>">Second player's link:</a> </li>
-  <li><a href="<%= Routes.live_path(@conn, PisqWeb.Live.UserLive, @conn_details[:spectator_id]) %>">Spectator's link:</a> </li>
-</ul>
+<div class="section">
+  <div class="content">
+    <h1 class="title">Rozhraní admina hry</h1>
+    Zde jsou odkazy pro hru, respektive přeposlání ostatním. Vyberte si stranu, za kterou chcete hrát,
+    a odkaz si otevřete v další záložce. Druhý odkaz přepošlete protihráči. Pokud by se na vaši hru chtěl někdo
+    další dívat, přepošlete mu odkaz pro pozorovatele.
+    <ul class="">
+      <li><a href="<%= Routes.live_path(@conn, PisqWeb.Live.UserLive, @conn_details[:crosses_id]) %>">Odkaz pro hráče s křížky</a> </li>
+      <li><a href="<%= Routes.live_path(@conn, PisqWeb.Live.UserLive, @conn_details[:circles_id]) %>">Odkaz pro hráče s kolečky</a> </li>
+      <li><a href="<%= Routes.live_path(@conn, PisqWeb.Live.UserLive, @conn_details[:spectator_id]) %>">Link pro pozorovatele</a> </li>
+    </ul>
+  </div>
+</div>

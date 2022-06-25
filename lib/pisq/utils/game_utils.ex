@@ -10,11 +10,11 @@ defmodule Pisq.Utils.GameUtils do
           :circles -> :crosses
           _ -> raise "Unknown player type"
         end
-        winner = case verify_win(board, coords) do
-          true -> user_type
-          false -> nil
+        {winner, winning_positions} = case verify_win(board, coords) do
+          {true, winning_positions} -> {user_type, winning_positions}
+          {false, winning_positions}-> {nil, winning_positions}
         end
-        {:ok, %{ game | board: board, current_player: current_player, winner: winner}}
+        {:ok, %{ game | board: board, current_player: current_player, winner: winner, winning_positions: winning_positions}}
       true ->
         {:error, "Either the user cannot play or the field is taken"}
     end
@@ -35,46 +35,40 @@ defmodule Pisq.Utils.GameUtils do
     game.current_player == user_type and game.winner == nil
   end
 
-  defp is_field_available(board, {x, y}) do
-    not Map.has_key?(board, {x, y})
+  defp check_fields(board, start, diff, count) do
+    starting_symbol = board[start]
+    {won, winning_fields} = Enum.reduce(0..count-1, {true, Map.new}, fn d, {won, winning_fields} ->
+      pos = add(start, multiply(d, diff))
+      won = won and board[pos] == starting_symbol
+      winning_fields = Map.put(winning_fields, pos, true)
+      {won, winning_fields}
+    end)
+    case won do
+      true -> {true, winning_fields}
+      false -> {false, Map.new}
+    end
   end
 
-  # verify if a side has won by placing a symbol at coordinates coords
-  defp verify_win(board, coords) do
-    check_left_to_right(board, coords) or check_up_down(board, coords) or check_diagonals(board, coords)
+  defp add({u, v}, {x, y}) do
+    {u + x, v + y}
   end
 
-  defp check_left_to_right(board, {x, y}) do
+  defp multiply(scalar, {x, y}) do
+    {scalar * x, scalar * y}
+  end
+
+  def verify_win(board, {x, y}) do
     winning_count = Application.get_env(:pisq, :winning_symbol_count)
-    Enum.any?(-(winning_count - 1)..0, fn dx -> check_row(board, {x + dx, y}) end)
-  end
-
-  defp check_up_down(board, {x, y}) do
-    winning_count = Application.get_env(:pisq, :winning_symbol_count)
-    Enum.any?(-(winning_count - 1)..0, fn dy -> check_column(board, {x, y + dy}) end)
-  end
-
-  defp check_diagonals(board, {x, y}) do
-    winning_count = Application.get_env(:pisq, :winning_symbol_count)
-    Enum.any?(-(winning_count - 1)..0, fn d -> check_diagonal(board, {x + d, y + d}) end)
-  end
-
-  defp check_row(board, {sx, sy} = starting_coords) do
-    winning_count = Application.get_env(:pisq, :winning_symbol_count)
-    starting_symbol = board[starting_coords]
-    Enum.all?(0..winning_count - 1, fn dx -> board[{sx + dx, sy}] == starting_symbol end)
-  end
-
-  defp check_column(board, {sx, sy} = starting_coords) do
-    winning_count = Application.get_env(:pisq, :winning_symbol_count)
-    starting_symbol = board[starting_coords]
-    Enum.all?(0..winning_count - 1, fn dy -> board[{sx, sy + dy}] == starting_symbol end)
-  end
-
-  defp check_diagonal(board, {sx, sy} = starting_coords) do
-    winning_count = Application.get_env(:pisq, :winning_symbol_count)
-    starting_symbol = board[starting_coords]
-    Enum.all?(0..winning_count - 1, fn d -> board[{sx + d, sy + d}] == starting_symbol end)
+    Enum.reduce(-(winning_count - 1)..0, {false, Map.new}, fn d, {won, winning_positions} ->
+      {won_row, winning_row} = check_fields(board, {x + d, y}, {1, 0}, winning_count)
+      {won_col, winning_col} = check_fields(board, {x, y + d}, {0, 1}, winning_count)
+      {won_diag, winning_diag} = check_fields(board, {x + d, y + d}, {1, 1}, winning_count)
+      won = won or won_row or won_col or won_diag
+      winning_positions = Map.merge(winning_positions, winning_row)
+      |> Map.merge(winning_col)
+      |> Map.merge(winning_diag)
+      {won, winning_positions}
+    end)
   end
 
   defp can_place_symbol?(board, x, y) do

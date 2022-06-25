@@ -7,7 +7,8 @@ defmodule Pisq.Game do
     turn_history: [],
     user_ids: nil,
     current_player: :crosses,
-    winner: nil
+    winner: nil,
+    winning_positions: nil
   ]
 
   def create_game() do
