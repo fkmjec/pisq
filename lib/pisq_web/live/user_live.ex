@@ -19,7 +19,8 @@ defmodule PisqWeb.Live.UserLive do
       board: board,
       winner: winner,
       winning_positions: game.winning_positions,
-      can_play: can_play
+      can_play: can_play,
+      page_title: "Křížky #{user_id}"
     }
   end
 
@@ -34,15 +35,23 @@ defmodule PisqWeb.Live.UserLive do
 
   def render(assigns) do
     ~L"""
-    <h3> User <%= @id %> - <%= @user_type %> </h3>
-    <div class="container-fluid px-0">
-    <span class="<%= Helpers.hide_when(@winner == nil) %>">
-      <h2>Good game!</h2>
-      <p>
-      The player who played <%= @winner %> won! Congratulations. Here, you will see some stats.TODO.
-      </p>
-    </span>
-    <%= live_component @socket, GameBoardComponent, board: @board, can_play: @can_play, winning_positions: @winning_positions %>
+    <!--
+    <div class="hero">
+      <div class="hero-body">
+      <h1 class="title is-4"> Hráč <%= @id %> - <%= @user_type %></h1>
+      </div>
+    </div>-->
+    <div class="section">
+      <div class="container-fluid px-0">
+      <span class="<%= Helpers.hide_when(@winner == nil) %>">
+        <h1 class="subtitle is-3">Skvělá hra!</h1>
+        <p>
+        Tentokrát vyhrál hráč hrající za <%= get_winner_text(@winner) %>! Gratulujeme!
+        Pro další hru se vydejte na <a href="<%= Routes.page_path(@socket, :index) %>">hlavní stránku</a>.
+        </p>
+      </span>
+      <%= live_component @socket, GameBoardComponent, board: @board, can_play: @can_play, winning_positions: @winning_positions %>
+    </div>
     """
   end
 
@@ -61,9 +70,9 @@ defmodule PisqWeb.Live.UserLive do
     {_, client_state} = update_state(socket.assigns.id)
     socket = cond do
       client_state.winner == :crosses ->
-        put_flash(socket, :info, "Crosses won!")
+        put_flash(socket, :info, "Křížky vyhrály!")
       client_state.winner == :circles ->
-        put_flash(socket, :info, "Circles won!")
+        put_flash(socket, :info, "Kolečka vyhrály!")
       true ->
         socket
     end
@@ -89,5 +98,13 @@ defmodule PisqWeb.Live.UserLive do
     socket = assign(socket, client_state)
     Endpoint.broadcast(game.user_ids.admin_id, "game_update", %{})
     {:noreply, socket}
+  end
+
+  defp get_winner_text(winner) do
+    case winner do
+      :crosses -> "křížky"
+      :circles -> "kolečka"
+      :nil -> ""
+    end
   end
 end

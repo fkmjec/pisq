@@ -4,10 +4,10 @@ defmodule PisqWeb.Live.GameBoardComponent do
 
   def render(assigns) do
     ~L"""
-      <div>
+      <div class="is-centered">
       <table class="game-board">
         <%= for y <- 0..Application.get_env(:pisq, :board_y)-1 do %>
-          <tr>
+          <tr class="game-field-row">
           <%= for x <- 0..Application.get_env(:pisq, :board_x)-1 do %>
             <td class="game-field-cell">
               <a class="game-field <%= Helpers.hide_when(@board[{x, y}] != nil or !@can_play) %>" href="#"
