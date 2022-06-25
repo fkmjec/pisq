@@ -20,7 +20,7 @@ defmodule PisqWeb.Live.UserLive do
       winner: winner,
       winning_positions: game.winning_positions,
       can_play: can_play,
-      page_title: "Křížky #{user_id}"
+      page_title: get_page_title(user_type, user_id)
     }
   end
 
@@ -35,14 +35,8 @@ defmodule PisqWeb.Live.UserLive do
 
   def render(assigns) do
     ~L"""
-    <!--
-    <div class="hero">
-      <div class="hero-body">
-      <h1 class="title is-4"> Hráč <%= @id %> - <%= @user_type %></h1>
-      </div>
-    </div>-->
     <div class="section">
-      <div class="container-fluid px-0">
+    <h1 class="title is-4 has-text-centered"><%= get_player_title_text(@user_type) %></h1>
       <span class="<%= Helpers.hide_when(@winner == nil) %>">
         <h1 class="subtitle is-3">Skvělá hra!</h1>
         <p>
@@ -105,6 +99,22 @@ defmodule PisqWeb.Live.UserLive do
       :crosses -> "křížky"
       :circles -> "kolečka"
       :nil -> ""
+    end
+  end
+
+  defp get_player_title_text(user_type) do
+    case user_type do
+      :crosses -> "Hraješ za křížky!"
+      :circles -> "Hraješ za kolečka!"
+      _ -> "Jen sleduješ hru!"
+    end
+  end
+
+  defp get_page_title(user_type, user_id) do
+    case user_type do
+      :crosses -> "Křížky - #{user_id}"
+      :circles -> "Kolečka - #{user_id}"
+      _ -> "Pozorovatel - #{user_id}"
     end
   end
 end
