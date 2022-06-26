@@ -1,18 +1,15 @@
 # Pisq
+## Jak aplikaci používat:
+Demo je k nalezení na adrese [pisq.kmjec.cz](pisq.kmjec.cz). Veškeré informace pro použití
+jsou pak k nalezení tam.
 
-To start your Phoenix server:
+## Jak aplikaci lokálně spustit:
+  * Stáhněte závislosti pomocí `mix deps.get`
+  * Endpoint se spouští pomocí `mix phx.server`
 
-  * Install dependencies with `mix deps.get`
-  * Start Phoenix endpoint with `mix phx.server` or inside IEx with `iex -S mix phx.server`
+Na adrese [`localhost:4000`](http://localhost:4000) pak poběží aplikace.
 
-Now you can visit [`localhost:4000`](http://localhost:4000) from your browser.
 
-Ready to run in production? Please [check our deployment guides](https://hexdocs.pm/phoenix/deployment.html).
-
-## Learn more
-
-  * Official website: https://www.phoenixframework.org/
-  * Guides: https://hexdocs.pm/phoenix/overview.html
-  * Docs: https://hexdocs.pm/phoenix
-  * Forum: https://elixirforum.com/c/phoenix-forum
-  * Source: https://github.com/phoenixframework/phoenix
+## Další odkazy
+  * Oficiální stránka Phoenixu: https://www.phoenixframework.org/
+  * Github Phoenixu: https://github.com/phoenixframework/phoenix
