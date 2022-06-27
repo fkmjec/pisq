@@ -3,9 +3,16 @@ defmodule PisqWeb.GameController do
   alias Pisq.Utils.StorageUtils, as: StorageUtils
   alias Pisq.Game, as: Game
 
-  def create_game(conn, _params) do
-    game = Game.create_game()
-    redirect(conn, to: Routes.game_path(conn, :admin, game.user_ids.admin_id))
+  def create_game(conn, params) do
+    HTTPoison.start()
+    recaptcha_response = params["g-recaptcha-response"]
+    case verify_recaptcha(recaptcha_response) do
+      true ->
+        game = Game.create_game()
+        redirect(conn, to: Routes.game_path(conn, :admin, game.user_ids.admin_id))
+      _ ->
+        redirect(conn, to: Routes.page_path(conn, :index))
+    end
   end
 
   def admin(conn, %{"admin_id" => admin_id }) do
@@ -22,6 +29,18 @@ defmodule PisqWeb.GameController do
         conn
         |> put_view(PisqWeb.ErrorView)
         |> render("404.html")
+    end
+  end
+
+  defp verify_recaptcha(recaptcha_response) do
+    secret_key = Application.get_env(:pisq, :recaptcha_secret)
+    result = HTTPoison.post("https://www.google.com/recaptcha/api/siteverify", "secret=#{secret_key}&response=#{recaptcha_response}", [{"Content-Type", "application/x-www-form-urlencoded"}])
+    case result do
+      {:ok, response} ->
+        body = Poison.decode!(response.body)
+        body["success"]
+      {:error, _} ->
+        :error
     end
   end
 end

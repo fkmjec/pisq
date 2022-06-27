@@ -44,7 +44,8 @@ config :pisq,
   board_x: 15,
   board_y: 15,
   max_id_number: 1000000000,
-  winning_symbol_count: 5
+  winning_symbol_count: 5,
+  recaptcha_secret: System.get_env("RECAPTCHA_SECRET")
 
 # Use Jason for JSON parsing in Phoenix
 config :phoenix, :json_library, Jason
