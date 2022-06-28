@@ -1,6 +1,7 @@
 defmodule Pisq.Game do
   alias Pisq.Utils.StorageUtils, as: StorageUtils
   defstruct [
+    creation_timestamp: nil,
     size_x: Application.get_env(:pisq, :board_x),
     size_y: Application.get_env(:pisq, :board_y),
     board: Map.new(),
@@ -19,7 +20,7 @@ defmodule Pisq.Game do
       crosses_id: generate_id(),
       circles_id: generate_id()
     }
-    game = %Pisq.Game{user_ids: user_ids}
+    game = %Pisq.Game{user_ids: user_ids, creation_timestamp: DateTime.to_unix(DateTime.utc_now())}
     case StorageUtils.store_game(game_id, game) do # can fail on conflicting game ids
       {:ok} -> game
       _ -> create_game() # FIXME: possible infinite recursion if the space of game ids is exhausted

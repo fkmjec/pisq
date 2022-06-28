@@ -16,6 +16,7 @@ defmodule Pisq.Application do
       {Phoenix.PubSub, name: Pisq.PubSub},
       # Start the Endpoint (http/https)
       PisqWeb.Endpoint,
+      Pisq.Workers.GameCleaner,
       {Registry, keys: :unique, name: GameRegistry},
       # Start a worker by calling: Pisq.Worker.start_link(arg)
       # {Pisq.Worker, arg}
