@@ -4,7 +4,7 @@ Pisq je webová aplikace pro hraní piškvorek. Je napsána v jazyce Elixir ve f
 ## Volba jazyka a nástrojů
 Pro aplikaci jsem volil jazyk Elixir. Elixir je velmi příjemný pro psaní webových aplikací,
 protože má k dispozici Erlangovský VM a nástroje z Erlangovského ekosystému, z nichž se některé mimořádně hodí.
-(například Erlang Term Storage, ale o tom dále).
+(například práci s procesy a Erlang Term Storage, ale o tom dále).
 
 Phoenix je pak framework pro psaní webových aplikací v Elixiru. Ve většině věcech se chová velmi podobně jako
 například Django. Navíc nabízí LiveView, což je integrovaný způsob provázání frontendu a backendu.
@@ -37,16 +37,15 @@ Projekt je dělený na dvě základní části, `pisq` a `pisq_web`.
 
 ### `pisq`
 V modulu `pisq` najdeme veškeré části backendu, které přímo nesouvisí
-se zobrazováním obsahu uživateli. Najdeme zde modul `application.ex`, který
+se zobrazováním obsahu uživateli. Nachází se zde modul `application.ex`, který
 obsahuje entrypoint celé aplikace, ve kterém se spouští potřebné procesy.
 
-Následně je zde složka `utils`, která obsahuje soubory s pomocnými funkcemi.
+Složka `utils`, obsahuje soubory s pomocnými funkcemi.
 Soubor `game_utils.ex` obsahuje funkce pro manipulaci se samotnou hrou, ověřování
-vítězství jednoho hráče a podobné. Soubor `storage_utils.ex` pak obsahuje rozhraní pro ukládání
+vítězství jednoho hráče a podobné. Soubor `storage_utils.ex` zajišťuje rozhraní pro ukládání
 stavů hry, momentálně do ETS.
 
-O `storage_utils` je důležité podotknout, že do budoucna tvoří rozhraní pro ukládání her. Pokud 
-bychom například chtěli hry ukládat do databáze, pak je to určitě možné, jen zachováme API a změníme
+O `storage_utils` je důležité podotknout, že do budoucna tvoří rozhraní pro ukládání her, ale nijak nepředepisuje implementaci. Pokud bychom například chtěli hry ukládat do databáze, pak je to určitě možné, jen zachováme API a změníme
 implementaci na pozadí.
 
 Soubor `game.ex` pak v sobě má definici herního objektu a funkci pro jeho vytvoření spolu s funkcí pro generování id
@@ -54,25 +53,22 @@ jednotlivých uživatelů a hry,
 
 ### `piqs_web`
 Modul `pisq_web` obsahuje komponenty přímo vztažené k zobrazování obsahu uživateli. Jeho rozložení je podobné libovolnému
-webovému frameworku, který se drží vzoru Model-View-Controller. Ve složce `controllers` najdeme `page_controller.ex` pro hlavní
-stránku a `game_controller.ex` pro administrátorskou stránku hry. V `game_controller.ex` se navíc vytváří nová hra.
+webovému frameworku, který se drží vzoru Model-View-Controller. Ve složce `controllers` najdeme `page_controller.ex` pro hlavní stránku (nedělá příliš mnoho zajímavého, nepotřebuje v podstatě žádná dynamická data) a `game_controller.ex` pro administrátorskou stránku hry. V `game_controller.ex` se navíc vytváří nová hra.
 
 Ve složce `live` se nachází soubor `user_live.ex`, ve které jsou informace o LiveView procesu, který má na starosti hru,
 a také samotná živá šablona. Proces si u sebe udržuje základní stav hry, který potřebuje pro zobrazování uživateli, a pokud se stane něco zajímavého
 (update herní plochy, vítězství jedné strany...), pak se doptá na stav hry a zaktualizuje ho u sebe i u klienta. Dalo by se říci, že v tomto
 souboru je těžiště celé aplikace. Dalším souborem ve složce je `game_board_component.ex`, který obsahuje šablonu pro samotnou komponentu herní plochy.
 
-V `templates` jsou šablony pro jednotlivé stránky. Ve `views` se pak nachází jednotlivá view, které jsou ale v základním stavu a neměnily
-se. Jsou zodpovědná za správné renderování šablon.
+V `templates` jsou šablony pro jednotlivé stránky. Ve `views` se pak nachází jednotlivá view, které jsou ale v základním stavu a neměnily se. Jsou zodpovědná za správné renderování šablon.
 
 V `router.ex` jsou pak definice jednotlivých adres a to, které view se má zavolat, pokud se uživatel dotáže na danou cestu.
 
+### Frontend
+Aplikace používá CSS framework Bulma, jehož barevná schémata přejímá.
+
 ## Možná vylepšení
-Aplikace rozhodně není dokonalá. Zde jsou nějaké nápady, kterými by se dala aplikace vylepšit, pokud by na to byl čas a energie
-  * mobilní zobrazení
-  * hraní proti počítači
-  * captcha u tvorby hry proti botům
-  * postup hry podle tahů
-  * ukládání stavu do databáze
-  * mazání starých her
-  * replay hry
+Aplikace rozhodně není dokonalá. Zde jsou nějaké nápady, kterými by se dala aplikace vylepšit v případě dalšího vývoje
+  - hraní proti počítači
+  - ukládání stavu do databáze
+  - replay hry
