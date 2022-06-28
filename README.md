@@ -1,6 +1,6 @@
 # Pisq
 ## Jak aplikaci používat:
-Demo je k nalezení na adrese [pisq.kmjec.cz](pisq.kmjec.cz). Veškeré informace pro použití
+Demo je k nalezení na adrese [pisq.kmjec.cz](https://pisq.kmjec.cz). Veškeré informace pro použití
 jsou pak k nalezení tam.
 
 ## Jak aplikaci lokálně spustit:
