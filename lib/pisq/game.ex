@@ -5,7 +5,6 @@ defmodule Pisq.Game do
     size_x: Application.get_env(:pisq, :board_x),
     size_y: Application.get_env(:pisq, :board_y),
     board: Map.new(),
-    turn_history: [],
     user_ids: nil,
     current_player: :crosses,
     winner: nil,

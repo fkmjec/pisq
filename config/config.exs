@@ -46,6 +46,7 @@ config :pisq,
   max_id_number: 1000000000,
   winning_symbol_count: 5,
   recaptcha_secret: System.get_env("RECAPTCHA_SECRET"),
+  recaptcha_sitekey: System.get_env("RECAPTCHA_SITEKEY"),
   max_game_ttl: 259200, # three days in seconds
   game_cleaning_interval: 30
 

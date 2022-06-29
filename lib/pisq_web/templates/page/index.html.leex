@@ -11,7 +11,7 @@
     <div class="hero is-centered has-text-centered">
       <div class="hero-body">
         <form id="creation-form" class="form" action="<%= Routes.game_path(@conn, :create_game) %>" method="post">
-          <button class="button is-info is-centered g-recaptcha" data-sitekey="6Lfb858gAAAAACTq76an4DfQg4i5MjHSry8lB7PA" data-callback="onSubmit" name="create_game" value="create_game">Vytvořit novou hru</button>
+          <button class="button is-info is-centered g-recaptcha" data-sitekey="<%= Application.get_env(:pisq, :recaptcha_sitekey) %>" data-callback="onSubmit" name="create_game" value="create_game">Vytvořit novou hru</button>
           <input type="hidden" value="<%= @csrf_token %>" name="_csrf_token"/>
         </form>
       </div>
