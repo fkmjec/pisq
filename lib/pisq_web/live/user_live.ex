@@ -5,6 +5,7 @@ defmodule PisqWeb.Live.UserLive do
   alias PisqWeb.Live.GameBoardComponent
   alias Pisq.Utils.StorageUtils, as: StorageUtils
   alias PisqWeb.Helpers, as: Helpers
+  alias PisqWeb.GameNotFoundError
 
   @module "UserLive"
 
@@ -27,7 +28,7 @@ defmodule PisqWeb.Live.UserLive do
   defp update_state(id) do
     game = case StorageUtils.get_game(id) do
       {:ok, game} -> game
-      {:error, _msg} -> raise "Not found" # TODO: make this not throw a 500
+      {:error, _msg} -> raise PisqWeb.GameNotFoundError, "Game not found"
     end
     client_state = create_client_state(id, game)
     {game, client_state}

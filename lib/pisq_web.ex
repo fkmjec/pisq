@@ -99,4 +99,13 @@ defmodule PisqWeb do
   defmacro __using__(which) when is_atom(which) do
     apply(__MODULE__, which, [])
   end
+
+  defimpl Plug.Exception, for: PisqWeb.GameNotFoundError do
+    def status(_exception), do: 404
+    def actions(_exception), do: []
+  end
+end
+
+defmodule PisqWeb.GameNotFoundError do
+  defexception [:message]
 end
