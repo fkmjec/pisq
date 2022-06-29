@@ -23,7 +23,7 @@ defmodule Pisq.Game do
     game = %Pisq.Game{user_ids: user_ids, creation_timestamp: DateTime.to_unix(DateTime.utc_now())}
     case StorageUtils.store_game(game_id, game) do # can fail on conflicting game ids
       {:ok} -> game
-      _ -> create_game() # FIXME: possible infinite recursion if the space of game ids is exhausted
+      _ -> create_game()
     end
   end
 
